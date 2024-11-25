@@ -1,0 +1,61 @@
+int trigPin = 8, echoPin = 12, pump_pin1 = 1, pump_pin2 = 2; 
+int speakerPin = 7;
+int rgbRedPin = 9;
+int rgbGreenPin = 10;
+int rgbBluePin = 11;
+void setup() {
+  Serial.begin(9600);
+  pinMode(8, OUTPUT);
+  pinMode(12, INPUT);
+  pinMode(1, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(7, OUTPUT); 
+  pinMode(rgbRedPin, OUTPUT);
+  pinMode(rgbGreenPin, OUTPUT);
+  pinMode(rgbBluePin, OUTPUT);
+}
+void playSound(int duration, int frequency) {
+  tone(7, frequency, 10000);
+  delay(1000);
+  noTone(7);
+}
+void setRGBColor(int red, int green, int blue) {
+  analogWrite(rgbRedPin, red);
+  analogWrite(rgbGreenPin, green);
+  analogWrite(rgbBluePin, blue);
+}
+
+void loop() {
+  long duration;
+  digitalWrite(8, LOW);
+  delayMicroseconds(5000);
+  digitalWrite(8, HIGH);
+  delayMicroseconds(5000);
+  digitalWrite(8, LOW);
+  duration = pulseIn(12, HIGH);
+  long distance = (duration * 0.034) / 2;
+  Serial.print(distance);
+  Serial.println("cm");
+  delay(1000);
+
+  if (distance < 10) {
+    digitalWrite(pump_pin1, HIGH);
+    digitalWrite(pump_pin2, HIGH);
+    setRGBColor(255, 0, 0);
+  } else if (distance < 20) {
+    digitalWrite(pump_pin1, LOW);
+    digitalWrite(pump_pin2, LOW);
+    playSound(262, 1000);
+    setRGBColor(0, 255, 0);
+    delay(5000);
+    digitalWrite(pump_pin1, HIGH);
+    digitalWrite(pump_pin2, HIGH);
+   playSound(262, 1000);
+   setRGBColor(255, 0, 0);
+  } else if (distance < 80) {
+    digitalWrite(pump_pin1, HIGH);
+    digitalWrite(pump_pin2, HIGH);
+    setRGBColor(255, 0, 0);
+  }
+  delay(5000);
+}
